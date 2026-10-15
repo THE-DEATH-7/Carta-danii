@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> DANII MI AMOR ❤️</title>
+  <style>
+    :root {
+      --bg-color: #f4cccc;
+      --envelope-color: #ffb3c1;
+      --envelope-dark: #ff8fa3;
+      --envelope-flap: #ff758f;
+      --letter-color: #ffffff;
+      --text-color: #590d22;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden; /* Mantiene los corazones dentro */
+      position: relative;
+    }
+
+    /* Fondo con corazones flotantes */
+    .heart-bg {
+      position: absolute;
+      bottom: -10vh;
+      font-size: 1.5rem;
+      color: #ff4d6d;
+      user-select: none;
+      animation: floatUp 6s linear infinite;
+      opacity: 0.7;
+      z-index: 1;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Contenedor principal para centrar el sobre */
+    .container {
+      position: relative;
+      width: 320px;
+      height: 220px;
+      z-index: 10;
+      /* Añadimos un margen superior para cuando la carta suba */
+      margin-top: 150px; 
+    }
+
+    /* Contenedor del sobre */
+    .envelope-wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: var(--envelope-dark);
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      border-radius: 0 0 10px 10px;
+      transition: transform 0.4s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Solapa superior interactiva */
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-top: 120px solid var(--envelope-flap);
+      transform-origin: top;
+      transition: transform 0.6s ease-in-out, z-index 0.6s;
+      z-index: 12;
+    }
+
+    /* Bolsillo del sobre (lados e inferior) */
+    .pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      border-left: 160px solid var(--envelope-color);
+      border-right: 160px solid var(--envelope-color);
+      border-bottom: 110px solid var(--envelope-dark);
+      border-top: 110px solid transparent;
+      border-radius: 0 0 10px 10px;
+      z-index: 11;
+    }
+
+    /* Sello con corazón */
+    .seal {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 45px;
+      height: 45px;
+      background-color: #c9184a;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #080808;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 13;
+      transition: opacity 0.4s ease;
+    }
+
+    /* La Carta - AJUSTADA */
+    .letter {
+      position: absolute;
+      bottom: 10px;
+      left: 5%;
+      width: 90%;
+      /* Altura inicial dentro del sobre */
+      height: 180px; 
+      background-color: var(--letter-color);
+      border-radius: 8px;
+      padding: 15px; /* Un poco menos de padding */
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      /* Transiciones */
+      transition: transform 0.8s ease-in-out, height 0.8s ease-in-out, z-index 0.4s;
+      z-index: 9;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start; /* Alinear al principio */
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Imagen de la carta - AJUSTADA */
+    .letter img {
+      width: 100%;
+      /* Altura máxima para que no empuje el texto hacia afuera */
+      max-height: 130px; 
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.6s;
+    }
+
+    /* Texto de la carta - AJUSTADA */
+    .letter-content {
+      color: var(--text-color);
+      /* Fuente un poco más pequeña para asegurar que quepa */
+      font-size: 0.95rem; 
+      line-height: 1.4;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.5s ease 0.6s;
+    }
+
+    /* Estado abierto controlado mediante la clase .open con JS */
+    .envelope-wrapper.open .flap {
+      transform: rotateX(180deg);
+      z-index: 8;
+    }
+
+    .envelope-wrapper.open .seal {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Animación de la carta saliendo - AJUSTADA */
+    .envelope-wrapper.open .letter {
+      /* Sube menos para no cortarse (-180px en lugar de -210px) */
+      transform: translateY(-180px); 
+      /* Altura final de la carta (más baja: 320px en lugar de 380px) */
+      height: 320px; 
+      z-index: 15;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .envelope-wrapper.open .letter img,
+    .envelope-wrapper.open .letter-content {
+      opacity: 1;
+    }
+
+    /* Texto de indicación */
+    .click-hint {
+      position: absolute;
+      bottom: -40px;
+      width: 100%;
+      text-align: center;
+      color: #131112;
+      font-size: 0.9rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Contenedor principal para manejar el espacio -->
+  <div class="container">
+    <!-- Sobre interactivo -->
+    <div class="envelope-wrapper" id="envelope">
+      <div class="flap"></div>
+      <div class="pocket"></div>
+      <div class="seal">❤️</div>
+      
+      <!-- Contenido de la Carta -->
+      <article class="letter">
+        <!-- Imagen de los corazones bokeh -->
+        <img src="img\Danii y yo.jpeg" alt="Imagen de amor">
+        <div class="letter-content">
+          <p>Mi amor,</p>
+          <p>Quiero que sepas que cada día que pasa, mi amor por ti crece más y más. Eres la persona que ilumina mi vida y me hace sentir completo.</p>
+          <p>Gracias por ser tú, por tu amor, tu paciencia y tu ternura.</p>
+       
+          <p>❤️TE AMO❤️</p>
+        </div>
+      </article>
+    </div>
+    
+    <div class="click-hint">
+      <p>5 meses de novios<br>
+         mi corazón se acelera cada vez que te veo. <br>
+      como si fuera el primer día.</p>
+    </div>
+    
+  </div>
+
+  <script>
+    // Toque para abrir/cerrar el sobre
+    const envelope = document.getElementById('envelope');
+    const hint = document.querySelector('.click-hint');
+
+    envelope.addEventListener('click', () => {
+      envelope.classList.toggle('open');
+      
+      // Cambiar el texto de ayuda
+      if (envelope.classList.contains('open')) {
+        hint.textContent = "Toca para cerrar";
+      } else {
+        hint.textContent = "Toca el sobre para abrir";
+      }
+    });
+
+    // Generador de corazones flotantes continuos
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart-bg');
+      heart.innerHTML = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = Math.random() * 3 + 4 + 's'; // Entre 4s y 7s
+      heart.style.fontSize = Math.random() * 15 + 15 + 'px'; // Tamaños aleatorios
+      
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);
+    }
+
+    setInterval(createHeart, 300);
+  </script>
+
+</body>
+</html>
